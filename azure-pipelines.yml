@@ -27,6 +27,7 @@ steps:
 - task: PublishPipelineArtifact@1 
   inputs: 
    targetPath: '$(Build.ArtifactStagingDirectory)'
+   artifactName: 'weather-checker'
 
 - task: PublishTestResults@2
   inputs:
