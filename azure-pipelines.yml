@@ -22,15 +22,20 @@ steps:
     goals: 'test package'
 - task: CopyFiles@2 
   inputs: 
-   contents: '**/*.zip' 
+   contents: '**/target/*.jar' 
    targetFolder: '$(Build.ArtifactStagingDirectory)' 
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: '$(Build.ArtifactStagingDirectory)'
+    includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    artifactName: 'drop'
+
 - task: PublishPipelineArtifact@1 
   inputs: 
    targetPath: '$(Build.ArtifactStagingDirectory)'
    artifactName: 'weather-checker'
-
-- task: PublishTestResults@2
-  inputs:
-    testResultsFormat: 'JUnit'
-    testResultsFiles: '**/surefire-reports/TEST-*.xml'
-    failTaskOnFailedTests: true 
