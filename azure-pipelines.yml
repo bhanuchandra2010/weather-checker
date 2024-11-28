@@ -22,7 +22,7 @@ steps:
     goals: 'test package'
 - task: CopyFiles@2 
   inputs: 
-   contents: '**/target/*.jar' 
+   contents: '**/*.zip' 
    targetFolder: '$(Build.ArtifactStagingDirectory)' 
 - task: PublishPipelineArtifact@1 
   inputs: 
