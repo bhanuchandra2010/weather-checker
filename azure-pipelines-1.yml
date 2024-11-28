@@ -1,0 +1,51 @@
+trigger:
+- main
+
+stages:
+- stage: build
+  jobs:
+  - job: run_build
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - task: Maven@3
+      inputs:
+        mavenPomFile: 'pom.xml'
+        goals: 'clean package'
+        options: '-DskipTests'
+        javaHomeOption: 'JDKVersion'
+        jdkVersionOption: '21'
+        mavenVersionOption: 'Default'
+        mavenAuthenticateFeed: false
+        effectivePomSkip: false
+
+    - task: CopyFiles@2
+      displayName: 'Copy JAR files'
+      inputs:
+        contents: '**/target/*.jar'
+        targetFolder: '$(Build.ArtifactStagingDirectory)'
+
+    - publish: '$(Build.ArtifactStagingDirectory)'
+      displayName: 'Publish JAR files'
+      artifact: 'weather-checker'
+
+- stage: test
+  dependsOn: build
+  jobs:
+  - job: run_test
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - download: current
+      artifact: 'weather-checker'
+
+    - task: Maven@3
+      inputs:
+        mavenPomFile: 'pom.xml'
+        goals: 'test'
+        options: ''
+        javaHomeOption: 'JDKVersion'
+        jdkVersionOption: '21'
+        mavenVersionOption: 'Default'
+        mavenAuthenticateFeed: false
+        effectivePomSkip: false
