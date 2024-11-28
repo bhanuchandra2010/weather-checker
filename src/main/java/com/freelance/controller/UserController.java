@@ -12,10 +12,15 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
     // Define a method to handle GET requests at "/user"
     @GetMapping("/user")
     public Mono<User> getUser() {
-        return userService.getUser();
+        return userService.getUser()
+                .flatMap(user -> {
+                    System.out.println(user.getName());
+                    return Mono.just(user);
+                });
     }
 
     // Define a method to handle POST requests at "/user"
