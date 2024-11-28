@@ -19,8 +19,7 @@ steps:
     jdkArchitectureOption: 'x64'
     publishJUnitResults: true
     testResultsFiles: '**/surefire-reports/TEST-*.xml'
-    goals: 'package'
-
+    goals: 'test package'
 - task: CopyFiles@2 
   inputs: 
    contents: '**/target/*.jar' 
@@ -28,3 +27,9 @@ steps:
 - task: PublishPipelineArtifact@1 
   inputs: 
    targetPath: '$(Build.ArtifactStagingDirectory)'
+
+- task: PublishTestResults@2
+  inputs:
+    testResultsFormat: 'JUnit'
+    testResultsFiles: '**/surefire-reports/TEST-*.xml'
+    failTaskOnFailedTests: true 
